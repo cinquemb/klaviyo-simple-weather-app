@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Weather Powered Email | Klaviyo</title>
+    <link rel="shortcut icon" href="/media/Favicon-16by16.png" />
+    <meta name="description" content="Klaviyo is email platform powered by data built for commerce and web businesses." />
+    <meta name="author" content="Klaviyo" />
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/media/css/bootstrap3/bootstrap.css" rel="stylesheet">
+    
+  
+  
+  <script src="//use.typekit.net/xof6qxk.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" media="all" type="text/css" href="/media/css/public/index-ie.css" />
+    <script type="text/javascript" src="/media/js/lib/PIE.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="/media/css/public/weather_app.css" media="all" />
+
+  </head>
+  <body id="page-basic" class="styles_2015">
+    
+  <header>
+  <div class="container">
+    <h1 class="logo"><a href="/">Klaviyo</a></h1>
+  </div>
+</header>
+  <div class="wrapper">
+    
+
+  <div class="container" id="weather_app">
+    <div class="animation"><img src="/media/images/public/hurricane.gif" /></div>
+    <h1>Weather Powered Email</h1>
+    <p>
+      At Klaviyo, we're focused on creating and delivering the best email experience by treating each email recipient individually. Instead of blasting out the same email to everyone, brands would be better off if each person received a personalized email. One interesting aspect of Klaviyo is finding unique ways to personalize emails.
+    </p>
+    <p>
+      For example, one type of data you could incorporate into emails is information about the local weather. Everyone wakes up in the morning and immediately notices if it's raining or sunny, if it's hotter or cooler than usual. So let's build a small newsletter that personalizes emails based on the weather in someone's area.
+    </p>
+
+    <h3>The Spec</h3>
+    <p>
+      Using the Python web framework of your choice (we use Django, but you can use another one if you prefer), create a newsletter sign up page that allows someone to enter their email address and choose their location from a list of the top 100 cities in the US by population. Once they submit their information and it's validated, it should be stored in a database and a confirmation message or page should be displayed. Keep in mind, the same email address should only be allowed to sign up once.
+    </p>
+
+    <div class="image_holder">
+      <img src="/media/images/public/weatherapp_mockup.png" class="img-thumbnail img-responsive" />
+    </div>
+
+    <p>
+      Then create a Django management command or a Python script to send a personalized email to each email address in the list. For each recipient, the script should fetch the current weather for that recipient's location and change the subject of the email based on the weather. If it's nice outside, either sunny or 5 degrees warmer than the average temperature for that location at that time of year, the email's subject should be "It's nice out! Enjoy a discount on us." Or if's it's not so nice out, either precipitating or 5 degrees cooler than the average temperature, the subject should be "Not so nice out? That's okay, enjoy a discount on us." If the weather doesn't meet either of those conditions, it's an average weather day and the email subject should read simply "Enjoy a discount on us." In all cases the email should be sent to the recipient's entered email address and come from your email address.
+    </p>
+    <p>
+      To look up a recipient's weather by their location, you can use the free <a href="http://www.wunderground.com/weather/api">Wunderground API</a>.
+    </p>
+    <p>The body of the email can be formatted however you like. It should contain a readable version of the recipient's location along with the current temperature and weather. For example, "55 degrees, sunny." (For extra flair, include an image or animated GIF of the current weather.)</p>
+
+    <h3>Testing</h3>
+    <p>When you're ready, subscribe the following email addresses with the following locations to your newsletter and send out your newsletter. Once you've done that, send a zip/archived project file to <a href="mailto:weatherapp@klaviyo.com">weatherapp@klaviyo.com</a> and we'll find a time to review the code together for 15-20 minutes.</p>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Email Address</th>
+          <th>City</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>weatherapp+anc@klaviyo.com</td>
+          <td>Anchorage, AK</td>
+        </tr>
+        <tr>
+          <td>weatherapp+aus@klaviyo.com</td>
+          <td>Austin, TX</td>
+        </tr>
+        <tr>
+          <td>weatherapp+bos@klaviyo.com</td>
+          <td>Boston, MA</td>
+        </tr>
+        <tr>
+          <td>weatherapp+sea@klaviyo.com</td>
+          <td>Seattle, WA</td>
+        </tr>
+        <tr>
+          <td>weatherapp+wdc@klaviyo.com</td>
+          <td>Washington, DC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>A Few Things to Think About</h3>
+    <p>Here are a few things you'll want to keep in mind while you're building this app:</p>
+    <ul>
+      <li><strong>Security</strong> How does your app handle invalid or even malicious input from users?</li>
+      <li><strong>Re-Usability</strong> What components of your app would make sense to be their own modules or services so they can be re-used by other sections of code later?</li>
+      <li><strong>Re-Inventing the Wheel?</strong> We're big believers in not building what's already been built. Of course there are trade offs, so how did you decide whether to build functionality yourself or use existing solutions to make your job easier?</li>
+      <li><strong>Usability</strong> It's important that Klaviyo be easy to use &mdash; both for our users and the people they're emailing. How could your app be easier (or maybe more fun) to use?</li>
+    </ul>
+
+    <h3>Have Questions?</h3>
+    <p>
+      If you have any questions, feel free send an email to <a href="mailto:weatherapp@klaviyo.com">weatherapp@klaviyo.com</a> and we can clarify any questions or edge cases.
+    </p>
+
+  </div>
+
+
+
+    <footer>
+  <div class="footer-bottom">
+    <div class="container">
+      <hr />
+      <p>Klaviyo Inc. Copyright &copy; 2015 - <a href="/privacy">Privacy</a> &amp; <a href="/terms-of-service">Terms of Service</a>.</p>
+    </div>
+  </div>
+</footer>
+  </div>
+
+
+    <script data-main="/media/js/public/weather_app.js" src="/media/js/lib/require.js"></script>
+
+    
+  
+  <script type="text/javascript" src="//www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+  <script type="text/javascript">
+    var _learnq = _learnq || [];
+    var _gaq = _gaq || [];
+    var _kmq = _kmq || [];
+
+    KlaviyoSubscribe.bootstrap({ assume_jquery: true });
+
+    KlaviyoSubscribe.attachFlyoutSignUp({
+      list: 'cPdqmG',
+      content: {
+        header: 'Free Email Marketing Guides and Insights',
+        subheader: 'Join thousands of people on our newsletter.',
+        button: 'Sign Up',
+        success: 'Thanks! Check your email for a confirmation.'
+      },
+      delay_scroll: false,
+      delay_seconds: 5,
+      pages: ['/foo'], // placeholder to force flyout not to load at all for now
+      modal_content: false
+    });
+
+    KlaviyoSubscribe.attachToForms('.klaviyo_subscription_form', {
+      custom_success_message: true,
+      hide_form_on_success: true,
+      success: function ($form) {
+        var email = jQuery.trim($form.find('[name="email"]').val());
+
+        if (!email) {
+          return;
+        }
+        
+        _learnq.push(['identify', { $email: email }]);
+        _learnq.push(['track', 'Newsletter Sign Up', { Source: 'Footer' }]);
+
+        _kmq.push(['identify', email]);
+        _kmq.push(['record', 'Newsletter Sign Up', { Source: 'Footer' }]);
+      }
+    });
+
+    KlaviyoSubscribe.executeWhenRequirementsLoaded(function () {
+      jQuery('body').on('klaviyo.subscribe.success', function (e) {
+
+        var form_elem = jQuery(e.currentTarget),
+            val = jQuery.trim(form_elem.find('[name="email"]').val());
+
+        if (val) {
+          _learnq.push(['identify', { $email: val }]);
+        }
+        _gaq.push(['_trackEvent', 'Acquisition', 'Newsletter Sign Up', 'Website']);
+      });
+    });
+  </script>
+
+  
+  <script type="text/javascript">
+    adroll_adv_id = "LEZZG6RMMBDL7D7G2X23UD";
+    adroll_pix_id = "WV5MTSYY4RHALJCPCYXQBW";
+
+    (function () {
+      try {
+        __adroll_loaded = true;
+        var scr = document.createElement("script"),
+            host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
+        scr.setAttribute('async', 'true');
+        scr.type = "text/javascript";
+        scr.src = host + "/j/roundtrip.js";
+        ((document.getElementsByTagName('head') || [null])[0] || document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
+      } catch (e) {
+        if (window.console && window.console.log) {
+          console.log(e);
+        }
+      }
+    }());
+  </script>
+
+  
+  <script src="//cdn.optimizely.com/js/1027107160.js"></script>
+
+    
+    
+      
+        <script type="text/javascript">
+          var _ats = _ats || [];
+          var _gaq = _gaq || [];
+
+          // Heap Analytics (Production)
+          window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+t+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+          heap.load("3899252612");
+
+          var _learnq = _learnq || [];
+          _learnq.push(['cookieDomain', '.klaviyo.com']);
+
+          
+        </script>
+
+        <script type="text/javascript" src="//addthisscript.s3.amazonaws.com/scripts/6w9Bbk.js"></script>
+      
+    
+  </body>
+</html>
