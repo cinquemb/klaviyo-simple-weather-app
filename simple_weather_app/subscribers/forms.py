@@ -17,7 +17,7 @@ class WeatherSubscriberForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder':'Email'}))
     
     class Meta:
-        model = BloomUserQueries
+        model = WeatherSubscriber
         exclude = (
             'city',
             'state',
@@ -45,6 +45,7 @@ class WeatherSubscriberForm(forms.ModelForm):
     def save(self, commit=True, *args, **kwargs):
         instance = super(WeatherSubscriberForm, self).save(commit=False, *args, **kwargs)
         t_city, t_state_short = self.cleaned_data.get('city_state_slug').split(',')
+        print t_city, t_state_short
         gps = get_geo_coords_data(self.cleaned_data.get('ip_address'), self.cleaned_data.get('user_agent'))
         instance.city = t_city.strip()
         instance.state = dict(STATE_CHOICES)[t_state_short.strip()]

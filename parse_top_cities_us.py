@@ -18,8 +18,17 @@ rows = soup.find_all('tr')
 headers = [filter_ish(x.get_text(), True) for x in rows[0].find_all('th')]
 h_map = {x:i for i,x in enumerate(headers)}
 
+REVERSE_STATE_CHOICES = {y:x for x,y in STATE_CHOICES}
+#print REVERSE_STATE_CHOICES
+
+data_cities = []
 for x in range(1,len(rows)):
 	node = [filter_ish(x.get_text()) for x in rows[x].find_all('td')]
+	city_node = {}
 	for key, value in h_map.iteritems():
-		print key.strip(), node[value].split('~')[0]
-	print '\n\n\n\n\n'
+		city_node['-'.join(key.strip().lower().split(' '))] = node[value].split('~')[0]
+		if node[value].split('~')[0] in REVERSE_STATE_CHOICES:
+			city_node[key.strip().lower() + '-short'] = REVERSE_STATE_CHOICES[node[value].split('~')[0]]
+	data_cities.append(city_node)
+
+print dict(STATE_CHOICES)['SD']

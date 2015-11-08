@@ -18,4 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', 'subscribers.views.home_page', name='home_page'),
+    url(r'^subscribers/$', 'subscribers.views.subscribers_submission', name='subscribers_submission'),
 ]

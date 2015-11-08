@@ -1,0 +1,75 @@
+{% load pipeline %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Simple Weather App{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Simple Weather App{% endblock %}"/>
+    {% block head %}
+    {% endblock %}
+    {% stylesheet 'all_css' %}
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+  	<header class="global">
+	    	<div class="row">
+		    	<div class="columns four">
+				    	<a href="/"><div class="brand">Simple Weather App</div></a>
+		    	</div>
+		    	<div class="columns eight">
+			    	<nav class="global">
+				    	<ul>
+				    	</ul>
+			    	</nav>
+			    	
+		    	</div>
+	    	</div>
+    </header>
+
+    {% block container %}
+    <section class="mainContent">
+      {% block content %}
+      {% endblock %}
+    </section>
+    {% endblock %}
+    
+    
+    <footer class="global">
+      <div class="row">
+        <div class="column three leftCol">
+          <p>
+             &copy; 2015 Simple Weather App
+          </p>
+        </div>
+        <div class="column eight rightCol">
+          <ul>
+            <li><a href="mailto:support@simpleweatherapp.com">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    
+    <div class="sideTab">
+	   
+	    <a href="mailto:support@simpleweatherapp.com" data-toggle="modal">Support</a>
+	    
+    </div>
+
+    {% javascript 'all_js' %}
+    <script type="text/javascript">
+      (function($) {
+       $('#loading-div')
+        .hide()
+        .ajaxStart(function() {
+          $(this).show();
+          })
+        .ajaxStop(function() {
+          $(this).hide();
+        });
+      })(jQuery);
+    </script>
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

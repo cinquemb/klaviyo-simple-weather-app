@@ -15,7 +15,7 @@ import os
 
 DEBUG = True
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'subscribers',
     'bootstrapform',
+    'pipeline',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,10 +93,28 @@ USE_L10N = True
 USE_TZ = True
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, 'static'),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
@@ -132,23 +151,42 @@ LOGGING = {
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+PIPELINE_CSS = {
+    'all_css': {
+        'source_filenames': (
+            'css/styles.css',
+            'css/header.css',
+        ),
+        'output_filename': 'css/all_css.css'
+    }
+}
+
+PIPELINE_JS = {
+    'all_js': {
+        'source_filenames': (
+            'js/jquery.min.js',
+            'js/bootstrap.js',
+            'js/jquery.placeholder.min.js',
+            'js/jquery.easing.1.3.js',
+            'js/jquery.accordion.js',
+            'js/jquery.slides.min.js',
+        ),
+        'output_filename': 'js/all_js.js'
+    }
+}
+PIPELINE_DISABLE_WRAPPER = True
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 LOGIN_REDIRECT_URL = '/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
+SENDGRID_USER = 'cinquemb'
 
-SENDGRID_USER = 'cinquembklaviyotest'
-SENDGRID_PASS = 'A5879f1047a9B-cinquembklaviyotest'
 
 SERVER_NAME ='localhost:8000'

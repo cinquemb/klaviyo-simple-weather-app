@@ -14,7 +14,7 @@ def home_page(request):
         'subscribers_form': subscribers_form,
     }
     data.update(csrf(request))
-    return render(request, 'bloom/home.html', data)
+    return render(request, 'simple_weather_app/home.html', data)
 
 def subscribers_submission(request):
     if request.method == 'POST':

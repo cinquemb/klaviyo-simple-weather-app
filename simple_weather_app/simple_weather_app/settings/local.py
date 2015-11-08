@@ -2,6 +2,9 @@ from .base import *
 
 DEBUG = True
 WUNDERGROUND_KEY = '751b945b05e70eb6'
+FOURSQUARE_CLIENT_ID = 'DKNVLG0KQHCDSG5N0K1YP0YAWKR111UKGGVMHHQAJBOQFWXH'
+FOURSQUARE_CLIENT_SECRET = 'SZJHIZARAL55TQ5YYDN14DDUCEQZ5K5I3ZTVQ4IHIEJGVDZ4'
+SENDGRID_KEY = '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'
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []

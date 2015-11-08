@@ -5,6 +5,8 @@ Django==1.8.6
 django-bootstrap-form==3.2
 django-debug-toolbar==1.4
 django-localflavor==1.1
+django-pipeline==1.5.4
+futures==3.0.3
 gnureadline==6.3.3
 html2text==2015.11.4
 ipython==4.0.0

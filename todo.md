@@ -12,6 +12,9 @@
 - Then create a Django management command or a Python script to send a personalized email to each email address in the list. 
 	-For each recipient:
 		-In all cases the email should be sent to the recipient's entered email address and come from your email address
+		- The body of the email can be formatted however you like.  
+			- It should contain a readable version of the recipient's location along with the current temperature and weather. 
+			- For example, "55 degrees, sunny."
 		- fetch the current weather for that recipient's location and change the subject of the email based on the weather (http://www.wunderground.com/weather/api). 
 			- If it's nice outside (either sunny or 5 degrees warmer than the average temperature for that location at that time of year), 
 				- the email's subject should be "It's nice out! Enjoy a discount on us." 
@@ -32,12 +35,10 @@ echo -n "klaviyo" | shasum -a 256 | awk '{printf("%s%s%s\n","A",substr($1,0,11),
 
 # code #
 
--finish models
--finish forms
--finish utils
--start work on views
--finish top cities parsing
--finish weather history data city
+- finish utils (parse out relevant data from fs urls)
+- emailing logic from weather api
+
+- debug ui (properly show confirmation/errors)
+
 - debug emails
-- foursquare api
 - sign up for sendgrid
