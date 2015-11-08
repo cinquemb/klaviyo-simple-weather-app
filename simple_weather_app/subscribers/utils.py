@@ -114,12 +114,11 @@ class SendGridEmailer:
             subject,
             html_body,
             to_emails,
-            to_names,
+            to_names=None,
             categories=None,
             plaintext_body=None,
             attachment_name=None,
-            attachment_path=None,
-            subscription_track=True):
+            attachment_path=None):
         '''
         Send an email using sendgrid.
         from_name: name sending from
@@ -149,9 +148,9 @@ class SendGridEmailer:
         )
         if attachment_name and attachment_path:
             message.add_attachment(attachment_name, attachment_path)
-        if not subscription_track:
-            message.add_filter_setting('subscriptiontrack', 'enable', 0)
-        message.add_to(to_emails, to_names)
+
+        if to_names:
+            message.add_to(to_emails, to_names)
 
         if categories:
             message.add_category(categories)

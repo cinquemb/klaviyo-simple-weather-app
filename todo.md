@@ -23,9 +23,7 @@ echo -n "klaviyo" | shasum -a 256 | awk '{printf("%s%s%s\n","A",substr($1,0,11),
 
 # code #
 
-- finish utils (parse out relevant data from fs urls)
-- emailing logic from weather api
-
+- debug data saving
 - debug ui (properly show confirmation/errors)
 
 - debug emails

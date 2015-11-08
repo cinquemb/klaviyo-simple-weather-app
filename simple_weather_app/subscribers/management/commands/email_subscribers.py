@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from subscribers.utils import send_email_confirmation
-from subscribers.models import WeatherSubscriber, get_current_conditions_and_history, get_nearby_fs_venues, get_venue_menu_items
+from subscribers.models import WeatherSubscriber, get_current_conditions_and_history, get_nearby_fs_venues, get_venue_menu_items, SendGridEmailer
 import csv
 import os
 
@@ -66,6 +66,8 @@ class Command(BaseCommand):
                 subject = "Enjoy a discount on us."
 
             message_body = 'Hello!\n\nCurrently for today, %s, it is %s degrees, and %s.\n\n' % (locale, locale_data['current_temp'], locale_data['current_cond']) + format_cheapest_items(sorted_menu_items, locale, venue_data)
+            s = SendGridEmailer()
+            s.send_email("Cinque","cinquemb@simple_weather_app", subject, message_body, [email_addr], categories='Test', plaintext_body=message_body)
 
 
             
