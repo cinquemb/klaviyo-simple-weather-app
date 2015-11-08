@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from subscribers.utils import send_email_confirmation
-from subscribers.models import WeatherSubscriber, get_current_conditions_and_history
+from subscribers.models import WeatherSubscriber, get_current_conditions_and_history, get_nearby_fs_venues, get_venue_menu_items
 import csv
 import os
 
@@ -22,6 +22,17 @@ class Command(BaseCommand):
 
             - extra: tie in foursqaures location api (https://developer.foursquare.com/start/search/https://developer.foursquare.com/docs/venues/explore) by searching for venues nearby them and returing top ten cheapest priced items: https://developer.foursquare.com/docs/venues/menu.html'''
 
+    def format_cheapest_items(menu_items, locale, venue_data):
+        max_items = min([len(menu_items), 10])
+        message_body = '\n\nCheck out these places nearby %s with affordable menu items:\n\n' % (locale)
+        for x in range(0,max_items):
+            item = menu_items[x]
+            place = venue_data[item['venue_id']]
+            temp_message_string = '\tPlace %s (%s):\n\n\t\tDish:%s\n\t\tPrice:%s\n\t\tType:%s\n\n' % (place['name'], place['location'], item['dish_name'], item['dish_price'], item['dish_type'])
+            message_body += temp_message_string
+        return message_body
+            
+
     def handle(self, *args, **options):
         w_subs = WeatherSubscriber.objects.all()
         history_cache = {}
@@ -29,10 +40,22 @@ class Command(BaseCommand):
             email_addr = x.email
             locale = x.generate_city_state_slug()
             if locale in history_cache:
-                locale_data = history_cache[locale]
+                locale_data = history_cache[locale]['weather']
+                venue_data = history_cache[locale]['venue_data']
+                sorted_menu_items = history_cache[locale]['venue_data_menu_items']
             else:
                 locale_data = get_current_conditions_and_history(x.latitude, x.longitude)
-                history_cache[locale] = data
+                venue_data = get_nearby_fs_venues(x.latitude, x.longitude)
+                all_menu_items = []
+                for key, value in venue_data.items():
+                    menu_items = get_venue_menu_items(key)
+                    sorted_items = sorted(menu_items, key=lambda k:k['dish_price'])
+                    all_menu_items+= sorted_items
+                
+                sorted_menu_items = sorted(all_menu_items, key=lambda k:k['dish_price'])
+                history_cache[locale]['venue_data'] = venue_data
+                history_cache[locale]['venue_data_menu_items'] = sorted_menu_items
+                history_cache[locale]['weather'] = data
 
             mean_day_temp = (locale_data['history_high_temp'] + locale_data['history_low_temp'])/float(2)
             if (locale_data['current_temp'] >= mean_day_temp) or 'sunny' in locale_data['current_cond'].lower():
@@ -42,7 +65,7 @@ class Command(BaseCommand):
             else:
                 subject = "Enjoy a discount on us."
 
-            body = 'Hello!\n\nCurrently for today, %s, it is %s degrees, and %s.\n\n' % (locale, locale_data['current_temp'], locale_data['current_cond'])
+            message_body = 'Hello!\n\nCurrently for today, %s, it is %s degrees, and %s.\n\n' % (locale, locale_data['current_temp'], locale_data['current_cond']) + format_cheapest_items(sorted_menu_items, locale, venue_data)
 
 
             

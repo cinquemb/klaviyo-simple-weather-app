@@ -15,16 +15,26 @@ from bs4 import BeautifulSoup as bs
 import re
 
 def get_nearby_fs_venues(lat,lng):
-    url = 'https://api.foursquare.com/v2/venues/search?ll=%s,%s&client_id=%s&client_secret=%s' % (lat, lng, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
+    url = 'https://api.foursquare.com/v2/venues/search?ll=%s,%s&oauth_token=G0DX0Z5SEQZRNQ3KTG24LO1REZMF2A12VVK32ZJUNOL4C4NC&v=20151108' % (lat, lng)#, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
     r = requests.get(url)
     nb_fs_venues = json.loads(r.text)
-    return nb_fs_venues
+    nb_fs_venues_data = {x['venue']['id']: {'name': x['venue']['name'],'location': x['venue']['location']} for x in nb_fs_venues['response']['groups'][0]['items']}
+    return nb_fs_venues_data
 
 def get_venue_menu_items(venue_id):
-    url = 'https://api.foursquare.com/v2/venues/%s/menu?client_id=%s&client_secret=%s' % (venue_id, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
+    url = 'https://api.foursquare.com/v2/venues/%s/menu?oauth_token=G0DX0Z5SEQZRNQ3KTG24LO1REZMF2A12VVK32ZJUNOL4C4NC&v=20151108' % (venue_id)#, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
     r = requests.get(url)
     menu_items = json.loads(r.text)
-    return menu_items
+
+    dishes = []
+    for menu in menu_items['response']['menu']['menus']['items']:
+        for x in menu['entries']['items']:
+            for y in x['entries']['items']:
+                dish_name = y['name']
+                dish_price = float(y['price'])
+                dish_type = x['name']
+                dishes.append({'dish_name': dish_name, 'dish_price': dish_price, 'dish_type': dish_type, 'venue_id': venue_id})
+    return dishes
 
 def format_temp(temp):
     return float(re.sub("[^0-9\.]", "", temp.strip()))
@@ -90,44 +100,6 @@ def format_email_address(address, name=None):
 
 class EmailError(Exception):
     pass
-
-def send_email(emails, message, subject, is_attach=False, html_file=False, is_testing=True):
-    if is_testing:
-        subject = 'Testing: ' + subject
-
-    if is_attach and html_file:
-        msg = email.mime.Multipart.MIMEMultipart()
-        msg.preamble = message
-        f = file(html_file)
-        attachment = email.mime.Text.MIMEText(f.read())
-        attachment.add_header('Content-Disposition', 'attachment', filename=html_file)           
-        msg.attach(attachment)
-        f.close()
-    else:
-        msg = email.mime.Text.MIMEText(message)
-
-
-    msg['From'] = 'cinquemb@simple_eather_app.localhost'
-    msg['Subject'] = subject
-    msg['To'] = ', '.join(emails)
-
-    
-    s = smtplib.SMTP('localhost')
-    s.set_debuglevel(1)
-    #s.ehlo()
-    s.starttls()
-    status = True
-    try:
-        s.sendmail('cinquemb@simple_eather_app.localhost', emails, msg.as_string())
-        s.quit()
-        print 'Email Sent'
-    except Exception,e:
-        #print e
-        print 'Email failed:',e, ', '.join(emails)
-        if str(e) == '[Errno 61] Connection refused':
-            status = False
-
-    return status
 
 class SendGridEmailer:
     def __init__(self):
