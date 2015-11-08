@@ -3,13 +3,14 @@ from django.utils.text import slugify
 from django.core.mail import send_mail
 from django.conf import settings
 from django import forms
+from localflavor.us.us_states import STATE_CHOICES
 from subscribers.models import WeatherSubscriber, SLUG_CHOICES
-from bloom_users.utils import get_geo_coords_data
+from subscribers.utils import get_geo_coords_data, email_is_valid_format
 import time
 import sys
 
 
-class BloomUserQueriesForm(forms.ModelForm):
+class WeatherSubscriberForm(forms.ModelForm):
     city_state_slug = forms.ChoiceField(
         choices=SLUG_CHOICES)
     email = forms.EmailField(
@@ -30,29 +31,23 @@ class BloomUserQueriesForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(BloomUserQueriesForm, self).__init__(*args, **kwargs)
+        super(WeatherSubscriberForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
-        for key,value in search_terms_map.iteritems():
-            self.fields[key] = forms.CharField(required=True, widget=forms.Textarea(attrs={'placeholder': 'Example: ' +', '.join(value)}))
 
     def clean(self):
         instance = getattr(self, 'instance', None)
-        #print instance
-        super(BloomUserQueriesForm, self).clean()
-        for key,value in search_terms_map.iteritems():
-            if key in self.cleaned_data:
-                if len(self.cleaned_data[key].strip()) < 1:
-                    raise forms.ValidationError(_('Please include your words/phrases for "%s"' % (key)))
-            else:
-                raise forms.ValidationError(_('Please include your words/phrases for "%s"' % (key)))       
-
+        super(WeatherSubscriberForm, self).clean()
+        if not email_is_valid_format(self.cleaned_data.get('email')):
+            raise forms.ValidationError(_('Please use an valid email address'))
+            
         return self.cleaned_data
 
     def save(self, commit=True, *args, **kwargs):
-        instance = super(BloomUserQueriesForm, self).save(commit=False, *args, **kwargs)
-        temps = str(time.time())
-        utctimestamp = temps.split('.')[0]
+        instance = super(WeatherSubscriberForm, self).save(commit=False, *args, **kwargs)
+        t_city, t_state_short = self.cleaned_data.get('city_state_slug').split(',')
         gps = get_geo_coords_data(self.cleaned_data.get('ip_address'), self.cleaned_data.get('user_agent'))
+        instance.city = t_city.strip()
+        instance.state = dict(STATE_CHOICES)[t_state_short.strip()]
         instance.ip_address = self.cleaned_data.get('ip_address')
         instance.user_agent = self.cleaned_data.get('user_agent')
         instance.latitude = gps[0]
@@ -60,10 +55,5 @@ class BloomUserQueriesForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            if not instance.session_id:
-                #video hash + guess-id
-                temp_session_hash = '%s %s %s' % (instance.pk, instance.user_agent, instance.ip_address)
-                instance.session_id = generate_session_hash(temp_session_hash)
-                instance.save()
 
         return instance

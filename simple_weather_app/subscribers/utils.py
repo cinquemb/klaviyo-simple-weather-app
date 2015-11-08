@@ -5,10 +5,22 @@ import sendgrid
 import urllib
 import urllib2
 import html2text
+import requests
+import json
 
-def get_current_temp():
-    'http://api.wunderground.com/api/751b945b05e70eb6/conditions/q/CA/San_Francisco.json'
-    pass
+def get_historical_temp_avg_data(city, city_short):
+    format_city = '_'.join(city.title().split(' '))
+    url = 'http://api.wunderground.com/api/%s/conditions/q/%s/%s.json' % (settings.WUNDERGROUND_KEY, city_short, format_city)
+    r = requests.get(url)
+    historical_conditions_data = json.loads(r.text)
+    return historical_conditions_data
+
+def get_current_temp_data(city, city_short):
+    format_city = '_'.join(city.title().split(' '))
+    url = 'http://api.wunderground.com/api/%s/conditions/q/%s/%s.json' % (settings.WUNDERGROUND_KEY, city_short, format_city)
+    r = requests.get(url)
+    current_conditions_data = json.loads(r.text)
+    return current_conditions_data
 
 def get_geo_coords_data(ip_address=None, user_agent=None):
     #bot usragent list to check against
@@ -22,7 +34,7 @@ def get_geo_coords_data(ip_address=None, user_agent=None):
         # replace with freegeoip.net
         #geostring = 'https://maps.google.com/maps/api/geocode/json?address=%s&sensor=false' % (address)
         geostring = 'http://freegeoip.net/json/%s' % (ip_address)
-        rgeo = requests.get(geostring, stream=False, headers={'User-Agent':' Mozilla/4.0 (Macintosh; Intel Mac OS X 10.6; rv:21.0) Gecko/20100104 Firefox/20.0'})
+        rgeo = requests.get(geostring, stream=False, headers={'User-Agent':'SpaceAlienDelight'})
         geo = json.loads(rgeo.text)
         nationstate = geo['country_name']
         regionlocale = geo['region_name']
