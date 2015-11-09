@@ -18,7 +18,10 @@ def get_nearby_fs_venues(lat,lng):
     url = 'https://api.foursquare.com/v2/venues/search?ll=%s,%s&oauth_token=G0DX0Z5SEQZRNQ3KTG24LO1REZMF2A12VVK32ZJUNOL4C4NC&v=20151108' % (lat, lng)#, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
     r = requests.get(url)
     nb_fs_venues = json.loads(r.text)
-    nb_fs_venues_data = {x['venue']['id']: {'name': x['venue']['name'],'location': x['venue']['location']} for x in nb_fs_venues['response']['groups'][0]['items']}
+    if 'groups' in nb_fs_venues['response']:
+        nb_fs_venues_data = {x['venue']['id']: {'name': x['venue']['name'],'location': x['venue']['location']} for x in nb_fs_venues['response']['groups'][0]['items']}
+    else:
+        nb_fs_venues_data = {}
     return nb_fs_venues_data
 
 def get_venue_menu_items(venue_id):
@@ -72,8 +75,11 @@ def get_geo_coords_data(ip_address=None, user_agent=None):
     if user_agent not in bots_user_agents and 'bot' not in user_agent:
         # replace with freegeoip.net
         #geostring = 'https://maps.google.com/maps/api/geocode/json?address=%s&sensor=false' % (address)
-        geostring = 'http://freegeoip.net/json/%s' % (ip_address)
-        rgeo = requests.get(geostring, stream=False, headers={'User-Agent':'SpaceAlienDelight'})
+        if ip_address == '127.0.0.1':
+            geostring = 'http://freegeoip.net/json/'
+        else:
+            geostring = 'http://freegeoip.net/json/%s' % (ip_address)
+        rgeo = requests.get(geostring, stream=False, headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.3'})
         geo = json.loads(rgeo.text)
         nationstate = geo['country_name']
         regionlocale = geo['region_name']
@@ -86,6 +92,9 @@ def get_geo_coords_data(ip_address=None, user_agent=None):
         return None
 
 def email_is_valid_format(email):
+    if email == 'cinquemb@simple_weather_app.localhost':
+        return True
+
     try:
         EmailField().clean(email)
         return True
@@ -103,10 +112,7 @@ class EmailError(Exception):
 
 class SendGridEmailer:
     def __init__(self):
-        self.s = sendgrid.Sendgrid(
-            settings.SENDGRID_USER,
-            settings.SENDGRID_KEY,
-            secure=True)
+        self.s = sendgrid.SendGridClient(settings.SENDGRID_KEY)
 
     def send_email(self,
             from_name,
@@ -140,19 +146,24 @@ class SendGridEmailer:
         if plaintext_body is None:
             plaintext_body = html2text.html2text(html_body)
 
-        message = sendgrid.Message(
-            (from_email, from_name),
-            subject,
-            plaintext_body,
-            html_body,
-        )
+        message = sendgrid.Mail()
+        message.set_html(html_body)
+
+        if from_email:
+            message.set_from(from_email)
+
+        if subject:
+            message.set_subject(subject)
+
         if attachment_name and attachment_path:
             message.add_attachment(attachment_name, attachment_path)
 
-        if to_names:
+        if to_names and to_emails:
             message.add_to(to_emails, to_names)
+        elif to_emails:
+            message.add_to(to_emails)
 
         if categories:
             message.add_category(categories)
 
-        self.s.web.send(message)
+        self.s.send(message)

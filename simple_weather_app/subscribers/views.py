@@ -27,9 +27,7 @@ def subscribers_submission(request):
         subscribers_form = WeatherSubscriberForm(data=data)
         if subscribers_form.is_valid():
             subscribers_form = subscribers_form.save(user_agent=_user_agent,ip_address=_ip_addr,canvas_tagging='')
-            return HttpResponse(json.dumps({
-            	'success_message': 'You have successfully subscribed to the weather mailing list!'
-            }), content_type='application/json')
+            return HttpResponse('You have successfully subscribed to the weather mailing list!', content_type='application/text')
         else:
             subscribers_form.errors.update(subscribers_form.errors)
             output_data['subscribers_form'] = subscribers_form
