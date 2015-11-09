@@ -42,9 +42,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -172,6 +172,7 @@ PIPELINE_JS = {
             'js/jquery.easing.1.3.js',
             'js/jquery.accordion.js',
             'js/jquery.slides.min.js',
+            'js/scripts.js',
         ),
         'output_filename': 'js/all_js.js'
     }

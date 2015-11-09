@@ -80,7 +80,7 @@ def get_geo_coords_data(ip_address=None, user_agent=None):
         ville = geo['city']
         lat = geo['latitude']
         lng = geo['longitude']
-        coords = 'lat:%s,lng:%s' % (lat,lng)
+        coords = [lat,lng]
         return coords
     else:
         return None

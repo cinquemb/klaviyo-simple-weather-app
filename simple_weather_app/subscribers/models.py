@@ -14,7 +14,7 @@ REVERSE_STATE_CHOICES = {y:x for x,y in STATE_CHOICES}
 class WeatherSubscriber(models.Model):
 	city = models.CharField(max_length=255)
 	#two letter state abbrevation
-	state = USStateField(choices=STATE_CHOICES)
+	state = models.TextField(max_length=255)
 	email = models.EmailField(null=True, blank=True, db_index=True)
 	# for finger printing to combat spam
 	#https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_usage

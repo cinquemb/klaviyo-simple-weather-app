@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
             message_body = 'Hello!\n\nCurrently for today, %s, it is %s degrees, and %s.\n\n' % (locale, locale_data['current_temp'], locale_data['current_cond']) + format_cheapest_items(sorted_menu_items, locale, venue_data)
             s = SendGridEmailer()
-            s.send_email("Cinque","cinquemb@simple_weather_app", subject, message_body, [email_addr], categories='Test', plaintext_body=message_body)
+            s.send_email("Cinque","cinquemb@simple_weather_app.localhost", subject, message_body, [email_addr], categories='Test', plaintext_body=message_body)
 
 
             
