@@ -42,6 +42,34 @@ def get_venue_menu_items(venue_id):
 def format_temp(temp):
     return float(re.sub("[^0-9\.]", "", temp.strip()))
 
+
+def get_current_conditions_and_history_api(city, state_short):
+    format_city = '_'.join(city.title().split(' '))
+    url = 'http://api.wunderground.com/api/%s/conditions/q/%s/%s.json' % (settings.WUNDERGROUND_KEY, state_short, format_city)
+    r = requests.get(url)
+    curr_day = '_'.join(datetime.date.fromtimestamp(time.time()).isoformat().split('-'))
+    url_h = 'http://api.wunderground.com/api/%s/history_%s/q/%s/%s.json' % (settings.WUNDERGROUND_KEY, curr_day, state_short, format_city)
+    r_h = requests.get(url_h)
+    current_conditions_data = json.loads(r.text)
+    historical_conditions_data = json.loads(r_h.text)
+
+    current_temp = float(current_conditions_data['current_observation']['temp_f'])
+    current_precip = float(current_conditions_data['current_observation']['precip_today_in'])
+    current_cond = current_conditions_data['current_observation']['weather']
+
+    history_high_temp = float(historical_conditions_data['history']['dailysummary'][0]['meantempm'])
+    history_low_temp = float(historical_conditions_data['history']['dailysummary'][0]['meantempm'])
+    return {'current_temp':current_temp,'current_cond':current_cond,'current_precip':current_precip,'history_high_temp':history_high_temp,'history_low_temp':history_low_temp}
+
+def get_current_temp_data(city, city_short):
+    format_city = '_'.join(city.title().split(' '))
+    url = 'http://api.wunderground.com/api/%s/conditions/q/%s/%s.json' % (settings.WUNDERGROUND_KEY, city_short, format_city)
+    r = requests.get(url)
+    current_conditions_data = json.loads(r.text)
+    return current_conditions_data
+
+    
+
 def get_current_conditions_and_history(lat,lng):
     #imperial units
     url = 'http://www.wunderground.com/cgi-bin/findweather/getForecast?query=%s,%s' % (lat,lng)
