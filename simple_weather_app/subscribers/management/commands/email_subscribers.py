@@ -2,9 +2,12 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from subscribers.utils import get_current_conditions_and_history, get_nearby_fs_venues, get_venue_menu_items, get_current_conditions_and_history_api, SendGridEmailer
 from subscribers.models import WeatherSubscriber
+import locale as lc
 import csv
 import os
 import sys
+
+lc.setlocale(lc.LC_ALL, '')
 
 class Command(BaseCommand):
     args = 'send emails out'
@@ -33,11 +36,11 @@ class Command(BaseCommand):
             if max_items == 0:
                 return ''
 
-            message_body = '\n\nCheck out these places nearby %s with affordable menu items:\n\n' % (locale)
+            message_body = '<br /><br />Check out these places nearby %s with affordable menu items:<br /><br />' % (locale)
             for x in range(0,max_items):
                 item = menu_items[x]
                 place = venue_data[item['venue_id']]
-                temp_message_string = '\tPlace %s (%s):\n\n\t\tDish:%s\n\t\tPrice:%s\n\t\tType:%s\n\n' % (place['name'], place['location'], item['dish_name'], item['dish_price'], item['dish_type'])
+                temp_message_string = ' Place %s (%s):<br /><br />       Dish: %s<br />     Price: %s<br />      Type: %s<br /><br />' % (place['name'], ' '.join(place['location']['formattedAddress']), item['dish_name'], lc.currency(item['dish_price'], grouping=True), item['dish_type'])
                 message_body += temp_message_string
             return message_body
 
@@ -59,20 +62,18 @@ class Command(BaseCommand):
                 print city, state, email_addr
 
                 locale_data = get_current_conditions_and_history_api(x.city, x.state)
-                venue_data = {}
-                sorted_menu_items = []
             else:
                 locale_data = get_current_conditions_and_history(x.latitude, x.longitude)
 
-                venue_data = get_nearby_fs_venues(x.latitude, x.longitude)
-                all_menu_items = []
-                for key, value in venue_data.items():
-                    menu_items = get_venue_menu_items(key)
-                    sorted_items = sorted(menu_items, key=lambda k:k['dish_price'])
-                    all_menu_items+= sorted_items
-                
-                sorted_menu_items = sorted(all_menu_items, key=lambda k:k['dish_price'])
-                history_cache[locale] = {'venue_data': venue_data, 'venue_data_menu_items': sorted_menu_items, 'weather':locale_data}
+            venue_data = get_nearby_fs_venues(x.latitude, x.longitude)
+            all_menu_items = []
+            for key, value in venue_data.items():
+                menu_items = get_venue_menu_items(key)
+                sorted_items = sorted(menu_items, key=lambda k:k['dish_price'])
+                all_menu_items+= sorted_items
+            
+            sorted_menu_items = sorted(all_menu_items, key=lambda k:k['dish_price'])
+            history_cache[locale] = {'venue_data': venue_data, 'venue_data_menu_items': sorted_menu_items, 'weather':locale_data}
 
             mean_day_temp = (locale_data['history_high_temp'] + locale_data['history_low_temp'])/float(2)
             if (locale_data['current_temp'] >= mean_day_temp) or 'sunny' in locale_data['current_cond'].lower():
@@ -82,7 +83,7 @@ class Command(BaseCommand):
             else:
                 subject = "Enjoy a discount on us."
 
-            message_body = 'Hello!</br>Currently, %s, it is %s degrees, and %s.</br></br>' % (locale, locale_data['current_temp'], locale_data['current_cond']) + format_cheapest_items(sorted_menu_items, locale, venue_data)
+            message_body = 'Hello!<br />Currently, %s, it is %s degrees, and %s.<br /><br />' % (locale, locale_data['current_temp'], locale_data['current_cond']) + format_cheapest_items(sorted_menu_items, locale, venue_data)
             s = SendGridEmailer()
 
             print 'Sending email to %s' % (email_addr)

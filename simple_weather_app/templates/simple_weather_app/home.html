@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<div class="wrapper homePage offset">
+	<div class="row">
+		<div class="four columns bullet">
+			<h3>The Simple Weather Mailing List</h3>
+			<p>Sample Topic 1</p>
+			<p>Sample Topic 2</p>
+			<p>Sample Topic 3</p>
+		</div>
+		<div class="eight columns bullet">
+			<h3>The Simple Weather Mailing List</h3>
+			<p>We seek to notify you of weather conditions in your area seamlessly</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="four columns bullet">
+			<p>Sample Blah 1</p>
+		</div>
+		<div class="four columns bullet">
+			<p>Sample Blah 2</p>
+		</div>
+		<div class="four columns bullet">
+			<p>Sample Blah 3</p>
+		</div>
+	</div>
+	
+	<div id="claimAction" class="row action">
+		<div class="twelve columns"></div>
+		<h3>Interested?</h3>
+		<a id="create-subscribe-link" data-toggle="modal" data-target="#subscribe-modal"><div class="btn">Subscribe!</div></a>
+	</div>
+	
+	<div class="row bottom">
+		<div class="twelve columns">
+		</div>
+	</div>
+</div>
+{% include "simple_weather_app/modal.html" %}
+{% endblock %}

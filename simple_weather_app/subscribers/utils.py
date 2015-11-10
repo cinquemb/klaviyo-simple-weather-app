@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.forms import EmailField
+from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 import sendgrid
 import urllib
@@ -14,14 +15,16 @@ import smtplib
 from bs4 import BeautifulSoup as bs
 import re
 
+
+if settings.DEBUG == True:
+    requests.packages.urllib3.disable_warnings()
+
 def get_nearby_fs_venues(lat,lng):
-    url = 'https://api.foursquare.com/v2/venues/search?ll=%s,%s&oauth_token=G0DX0Z5SEQZRNQ3KTG24LO1REZMF2A12VVK32ZJUNOL4C4NC&v=20151108' % (lat, lng)#, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
+    url = 'https://api.foursquare.com/v2/venues/explore?ll=%s,%s&oauth_token=G0DX0Z5SEQZRNQ3KTG24LO1REZMF2A12VVK32ZJUNOL4C4NC&v=20151108' % (lat, lng)#, settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
     r = requests.get(url)
     nb_fs_venues = json.loads(r.text)
-    if 'groups' in nb_fs_venues['response']:
-        nb_fs_venues_data = {x['venue']['id']: {'name': x['venue']['name'],'location': x['venue']['location']} for x in nb_fs_venues['response']['groups'][0]['items']}
-    else:
-        nb_fs_venues_data = {}
+    #if 'groups' in nb_fs_venues['response']:
+    nb_fs_venues_data = {x['venue']['id']: {'name': x['venue']['name'],'location': x['venue']['location']} for x in nb_fs_venues['response']['groups'][0]['items']}
     return nb_fs_venues_data
 
 def get_venue_menu_items(venue_id):
@@ -30,9 +33,18 @@ def get_venue_menu_items(venue_id):
     menu_items = json.loads(r.text)
 
     dishes = []
+    if 'menu' not in menu_items['response']:
+        return dishes
+
+    if menu_items['response']['menu']['menus']['count'] == 0:
+        return dishes
+
     for menu in menu_items['response']['menu']['menus']['items']:
         for x in menu['entries']['items']:
             for y in x['entries']['items']:
+                if 'price' not in y:
+                    continue
+
                 dish_name = y['name']
                 dish_price = float(y['price'])
                 dish_type = x['name']
@@ -174,8 +186,10 @@ class SendGridEmailer:
         if plaintext_body is None:
             plaintext_body = html2text.html2text(html_body)
 
+        output_data = {'body': html_body}
+        html_message = render_to_string('email/weather_notif.html', output_data)
         message = sendgrid.Mail()
-        message.set_html(html_body)
+        message.set_html(html_message)
 
         if from_email:
             message.set_from(from_email)

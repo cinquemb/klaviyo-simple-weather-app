@@ -1,0 +1,20 @@
+{% load bootstrap %}
+<div class="simple_weather_app-modal modal hide fade" id="subscribe-modal">
+  <div class="modal-header">
+  	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h1>Subscribe</h1>
+  </div>
+  <div class="modal-body">
+  	<form class="subscribers_submission form" method="POST" action="{% url 'subscribers_submission' %}">{% csrf_token %}
+  		<div class="modal-form-body">{{ subscribers_form|bootstrap }}</div>
+  		<div class="form-footer">
+	      <div class="control-group submit">
+	        <div class="controls">
+	          <button class="btn submit-btn" type="submit">Submit</button>
+	        </div>
+	      </div>
+    	</div>
+	</form>
+  </div>
+  <div class="loading-overlay"></div>
+</div>
